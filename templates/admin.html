@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>管理者ページ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>管理者専用ページ</h1>
+
+    <p>管理者ユーザーのみアクセス可能なページです。</p>
+
+    <ul class="admin-menu">
+        <li><a href="{{ url_for('manage_users') }}">ユーザー管理</a></li>
+        <li><a href="{{ url_for('manage_tags') }}">タグ管理</a></li>
+        <!-- <li><a href="{{ url_for('manage_records') }}">📚 登録データ管理</a></li> -->
+        <li><a href="{{ url_for('login') }}">🔙 戻る</a></li>
+    </ul>
+
+</body>
+
+</html>

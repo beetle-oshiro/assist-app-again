@@ -1,0 +1,60 @@
+<!-- assist_register.html: アシスト登録フォーム（新仕様） -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>アシスト登録</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>アシスト登録フォーム</h1>
+
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+        {% if error %}
+        <p class="error-message">{{ error }}</p>
+        {% endif %}
+
+        {% if success %}
+        <p class="success-message">{{ success }}</p>
+        {% endif %}
+
+        <p>登録したい内容を入力してください。</p>
+
+        <form method="post">
+            <label for="word">ワード：</label><br>
+            <input type="text" id="word" name="word" required><br><br>
+
+            <label for="details">説明：</label><br>
+            <textarea id="details" name="details" rows="15" required></textarea><br><br>
+
+            <label for="tag">タグを選択：</label><br>
+            <select id="tag" name="tag" required>
+                {% for tag in tag_list %}
+                <option value="{{ tag.id }}">{{ tag.name }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="assist_summary" name="assist_summary">
+                <label for="assist_summary">説明をアシスト</label><br>
+
+                <input type="checkbox" id="assist_code" name="assist_code">
+                <label for="assist_code">コードをアシスト</label><br>
+            </div><br>
+
+            <button type="submit" name="confirm_submit" value="1">登録内容を確認</button>
+        </form>
+
+        <p class="back-link"><a href="{{ url_for('assist_select') }}">← 選択に戻る</a></p>
+    </div>
+</body>
+
+</html>

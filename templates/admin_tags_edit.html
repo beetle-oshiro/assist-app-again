@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>タグ情報の編集</h1>
+
+<!-- メッセージ表示 -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="flash {{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<!-- 編集フォーム -->
+<form method="POST">
+    <!-- タグ名 -->
+    <label>タグ名：</label><br>
+    <input type="text" name="name" value="{{ tag.name }}" required><br><br>
+
+    <!-- ボタン -->
+    <div class="button-group">
+        <button type="submit" class="class_button_register">更新する</button>
+        <a href="{{ url_for('manage_tags') }}" class="class_button_a">
+            <button type="button">キャンセル</button>
+        </a>
+    </div>
+</form>
+
+<!-- 🔻 削除専用フォーム（POST送信）※オプション -->
+<form method="POST" action="{{ url_for('delete_tag', tag_id=tag.id) }}" onsubmit="return confirm('⚠️ このタグを削除しますか？');">
+    <button type="submit" style="margin-top: 10px; color: red;">削除</button>
+</form>
+
+{% endblock %}

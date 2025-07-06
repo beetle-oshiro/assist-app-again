@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>ユーザー一覧</h1>
+
+<!-- 成功メッセージがあるときに緑文字で表示 -->
+{% if error %}
+<p style="color: red;">{{ error }}</p>
+{% endif %}
+
+<!-- 🔔 フラッシュメッセージ表示エリア -->
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class="flash-messages">
+    {% for message in messages %}
+    <li style="color: green;">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+
+<!-- 新規ユーザー登録ボタン -->
+<p>
+    <a href="{{ url_for('add_user') }}" class="class_a_register">
+        <button type="button">＋ 新規ユーザー登録</button>
+    </a>
+</p>
+
+
+<!-- 検索フォーム -->
+<form method="POST" action="{{ url_for('manage_users') }}">
+    <label for="keyword">ユーザー名：</label>
+    <input type="text" name="keyword" id="keyword" placeholder="検索キーワード" value="{{ keyword or '' }}">
+
+    <label for="is_admin">権限：</label>
+    <select name="is_admin" id="is_admin">
+        <option value="">すべて</option>
+        <option value="1" {% if selected_admin=='1' %}selected{% endif %}>管理者のみ</option>
+        <option value="0" {% if selected_admin=='0' %}selected{% endif %}>一般ユーザーのみ</option>
+    </select>
+
+    <label for="match_type">一致条件：</label>
+    <select name="match_type" id="match_type">
+        <option value="partial" {% if match_type=='partial' %}selected{% endif %}>部分一致</option>
+        <option value="exact" {% if match_type=='exact' %}selected{% endif %}>完全一致</option>
+    </select>
+
+    <button type="submit">🔍 検索</button>
+</form>
+<br>
+
+
+<table border="1" cellpadding="10">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>ユーザー名</th>
+            <th>パスワード（ハッシュ）</th>
+            <th>権限</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.password }}</td>
+            <td>{{ "✅" if user.is_admin else "❌" }}</td>
+            <td>
+                <div class="table-actions">
+                    <!-- 編集ボタン：ユーザーID付きでリンク -->
+                    <form action="{{ url_for('edit_user', user_id=user.id) }}" method="get">
+                        <button type="submit">編集</button>
+                    </form>
+                    <!-- 削除ボタン -->
+                    <form action="{{ url_for('delete_user', user_id=user.id) }}" method="post" style="display:inline;"
+                        onsubmit="return confirm('このユーザーを削除しますか？');">
+                        <button type="submit">削除</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<a href="{{ url_for('admin') }}">← 管理者ページに戻る</a>
+{% endblock %}

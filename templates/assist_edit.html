@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>アシストデータの編集</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>アシストデータの編集</h1>
+
+        <!-- フラッシュメッセージ -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- 編集フォーム -->
+        <form method="POST" class="edit-form">
+            <div class="form-group">
+                <label>ワード：</label>
+                <input type="text" name="word" value="{{ record.word }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>説明：</label>
+                <textarea name="details" rows="6" required>{{ record.details }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>タグ：</label>
+                <select name="tag" required>
+                    {% for tag in tag_list %}
+                    <option value="{{ tag.id }}" {% if record.tag_id|string==tag.id|string %}selected{% endif %}>{{
+                        tag.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group button-group">
+                <button type="submit" class="class_button_register">登録する</button>
+                <a href="{{ url_for('assist_search') }}" class="class_button_a"><button type="button"
+                        class="class_button_cl">キャンセル</button></a>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

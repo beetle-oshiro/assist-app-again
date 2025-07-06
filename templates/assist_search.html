@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>アシスト検索</title>
+
+    <!-- ハイライト.jsの読み込み -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>アシスト検索ページ</h1>
+
+        <!-- フラッシュメッセージ表示 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% if error %}
+        <p class="error-message">{{ error }}</p>
+        {% endif %}
+        {% if success %}
+        <p class="success-message">{{ success }}</p>
+        {% endif %}
+
+        <!-- 検索フォーム -->
+        <form method="POST" class="search-form">
+            <div class="form-group">
+                <label>検索キーワード：</label>
+                <input type="text" name="keyword" value="{{ request.form.keyword or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>検索方法：</label><br>
+                <label><input type="radio" name="match_type" value="exact" {% if request.form.match_type=='exact'
+                        %}checked{% endif %}> 完全一致</label>
+                <label><input type="radio" name="match_type" value="partial" {% if request.form.match_type !='exact'
+                        %}checked{% endif %}> 部分一致</label>
+            </div>
+
+            <div class="form-group">
+                <label>検索対象：</label><br>
+                <label><input type="checkbox" name="search_word" {% if request.form.search_word %}checked{% endif %}>
+                    ワード</label>
+                <label><input type="checkbox" name="search_details" {% if request.form.search_details %}checked{% endif
+                        %}> 説明</label>
+                <label><input type="checkbox" name="search_assist" {% if request.form.search_assist %}checked{% endif
+                        %}> アシスト説明</label>
+                <label><input type="checkbox" name="search_code" {% if 'search_code' in request.form %}checked{% endif
+                        %}> コード</label>
+            </div>
+
+            <div class="form-group">
+                <label>タグで絞り込み：</label>
+                <select name="tag">
+                    <option value="">-- 選択なし --</option>
+                    {% for tag in tag_list %}
+                    <option value="{{ tag.id }}" {% if request.form.tag==tag.id|string %}selected{% endif %}>
+                        {{ tag.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="検索">
+            </div>
+        </form>
+
+        <hr>
+
+        <!-- 検索結果 -->
+        {% if results %}
+        <h2>検索結果（{{ results|length }} 件）</h2>
+        <div class="result-table-wrapper">
+            <table class="result-table">
+                <tr>
+                    <th>ワード</th>
+                    <th>タグ</th>
+                    <th>説明</th>
+                    <th>アシスト</th>
+                    <th>コード</th>
+                    <th>更新日</th>
+                    <th>操作</th>
+                </tr>
+                {% for item in results %}
+                <tr>
+                    <td>{{ item.word }}</td>
+                    <td>{{ item.tag_name }}</td>
+                    <td>{{ item.details }}</td>
+                    <td>{{ item.summary_result.replace('\n', '<br>') | safe }}</td>
+                    <td>
+                        <pre><code class="language-{{ code_language }}">{{ item.code_result }}</code></pre>
+                    </td>
+                    <td>{{ item.updated_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <div class="table-actions">
+                            <!-- 編集ボタン -->
+                            <div class="table-actions">
+                                <form action="{{ url_for('assist_edit', record_id=item.id) }}" method="get">
+                                    <button type="submit">編集</button>
+                                </form>
+                            </div>
+                            <!-- 削除ボタン -->
+                            <form action="{{ url_for('assist_delete', record_id=item.id) }}" method="post"
+                                onsubmit="return confirm('このデータを削除しますか？');">
+                                <button type="submit">削除</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% elif no_result %}
+        <p class="no-result">検索条件に一致するデータが見つかりませんでした。</p>
+        {% endif %}
+
+        <p class="back-link"><a href="{{ url_for('assist_select') }}">← 選択に戻る</a></p>
+    </div>
+</body>
+
+</html>

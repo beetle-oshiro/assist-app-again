@@ -1,0 +1,39 @@
+<!-- signup.html: 新規ユーザー登録用フォーム画面 -->
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>新規ユーザー登録</title>
+</head>
+
+<body>
+    <h1>新規ユーザー登録</h1>
+
+    <!-- エラーメッセージがあれば表示 -->
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- 成功メッセージがあれば表示 -->
+    {% if success %}
+    <p style="color: green;">{{ success }}</p>
+    {% endif %}
+
+    <!-- ユーザー登録フォーム（POSTで送信） -->
+    <form method="post">
+        <label for="username">ユーザーID：</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">パスワード：</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">登録</button>
+    </form>
+
+    <!-- ログインページへのリンク -->
+    <p><a href="{{ url_for('login') }}">ログインはこちら</a></p>
+</body>
+
+</html>

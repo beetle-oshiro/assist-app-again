@@ -1,0 +1,31 @@
+<!-- assist_select.html: アシストモードの選択画面 -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>アシスト選択</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>アシストモード</h1>
+        <p>以下のどちらかを選択してください：</p>
+
+        <!-- 登録ページへ -->
+        <form action="{{ url_for('assist_register') }}" method="get">
+            <button type="submit">登録する</button>
+        </form>
+
+        <!-- 検索ページへ -->
+        <form action="{{ url_for('assist_search') }}" method="get">
+            <button type="submit">検索する</button>
+        </form>
+
+        <!-- ログインページに戻るリンク -->
+        <p class="back-link"><a href="{{ url_for('login') }}">← ログインページに戻る</a></p>
+    </div>
+</body>
+
+</html>

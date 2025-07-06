@@ -1,0 +1,41 @@
+<!-- login.html: ログインフォームのテンプレート -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <h1>ログイン</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flash-messages">
+        {% for category, message in messages %}
+        <li class="flash {{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <!-- エラーがあるときは表示する -->
+    {% if error %}
+    <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- ログインフォーム -->
+    <form method="post" autocomplete="off">
+        <label for="username">ニックネーム：</label>
+        <input type="text" id="username" name="username" autocomplete="off" required><br><br>
+
+        <label for="password">パスワード：</label>
+        <input type="password" id="password" name="password" autocomplete="off" required><br><br>
+
+        <button type="submit">ログイン</button>
+    </form>
+</body>
+
+</html>

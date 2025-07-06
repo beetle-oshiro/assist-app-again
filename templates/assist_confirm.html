@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>登録内容の確認</title>
+
+    <!-- コードハイライトのスタイルと本体読み込み -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>登録内容の確認</h1>
+        <p>以下の内容で登録してもよろしいですか？</p>
+
+        <div class="confirm-section">
+            <label>ワード：</label>
+            <p>{{ word }}</p>
+        </div>
+
+        <div class="confirm-section">
+            <label>説明：</label>
+            <p id="details_display">{{ details }}</p>
+            <textarea id="details_edit" class="confirm-textarea" style="display:none;">{{ details }}</textarea>
+
+            <!-- 編集ボタン -->
+            <div class="edit-buttons">
+                <button id="edit_btn" type="button" onclick="startEdit()">説明を編集する</button>
+                <div id="edit_buttons" style="display:none;">
+                    <button type="button" onclick="cancelEdit()">編集をやめる</button>
+                    <button type="button" onclick="confirmEdit()">編集を確定する</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="confirm-section">
+            <label>タグ：</label>
+            <p>{{ tag_name }}</p>
+        </div>
+
+        {% if summary_result %}
+        <div class="confirm-section">
+            <label>デキスギによる超簡潔な説明：</label>
+            <p>{{ summary_result }}</p>
+        </div>
+        {% endif %}
+
+        {% if code_result %}
+        <div class="confirm-section">
+            <label>デキスギによるコード例：</label>
+            <pre><code class="language-{{ code_language }}">{{ code_result | safe }}</code></pre>
+        </div>
+        {% endif %}
+
+        <!-- 登録フォーム -->
+        <form method="post" action="{{ url_for('assist_register_confirm') }}" onsubmit="syncEditedText()">
+            <input type="hidden" name="word" value="{{ word }}">
+            <input type="hidden" id="hidden_details" name="details" value="{{ details }}">
+            <input type="hidden" name="tag" value="{{ tag }}">
+            <input type="hidden" name="summary_result" value="{{ summary_result }}">
+            <input type="hidden" name="code_result" value="{{ code_result }}">
+            <input type="hidden" name="code_language" value="{{ code_language }}">
+            <button type="submit">登録OK！</button>
+        </form>
+
+        <p><a href="{{ url_for('assist_register') }}">キャンセル → 登録フォームに戻る</a></p>
+    </div>
+
+    <!-- 編集操作用のJavaScript -->
+    <script>
+        function startEdit() {
+            document.getElementById('details_display').style.display = 'none';
+            document.getElementById('details_edit').style.display = 'block';
+            document.getElementById('edit_btn').style.display = 'none';
+            document.getElementById('edit_buttons').style.display = 'block';
+        }
+
+        function cancelEdit() {
+            document.getElementById('details_edit').value = document.getElementById('details_display').textContent;
+            document.getElementById('details_edit').style.display = 'none';
+            document.getElementById('details_display').style.display = 'block';
+            document.getElementById('edit_btn').style.display = 'inline';
+            document.getElementById('edit_buttons').style.display = 'none';
+        }
+
+        function confirmEdit() {
+            const editedText = document.getElementById('details_edit').value;
+            document.getElementById('details_display').textContent = editedText;
+            document.getElementById('details_display').style.display = 'block';
+            document.getElementById('details_edit').style.display = 'none';
+            document.getElementById('edit_btn').style.display = 'inline';
+            document.getElementById('edit_buttons').style.display = 'none';
+        }
+
+        function syncEditedText() {
+            document.getElementById('hidden_details').value = document.getElementById('details_display').textContent;
+        }
+    </script>
+</body>
+
+</html>

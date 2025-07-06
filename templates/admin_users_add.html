@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}ユーザー新規登録{% endblock %}
+
+{% block content %}
+<h2>ユーザー新規登録</h2>
+
+<!-- エラーメッセージの表示 -->
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+
+<!-- 成功メッセージの表示 -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<p style="color: {% if category == 'success' %}green{% else %}red{% endif %};">
+    {{ message }}
+</p>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('add_user') }}">
+    <label for="username">ユーザー名：</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="password">パスワード：</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label for="is_admin">管理者権限：</label><br>
+    <select id="is_admin" name="is_admin" required>
+        <option value="0">一般ユーザー</option>
+        <option value="1">管理者</option>
+    </select><br><br>
+
+    <button type="submit">登録</button>
+    <a href="{{ url_for('manage_users') }}">キャンセル</a>
+</form>
+{% endblock %}
